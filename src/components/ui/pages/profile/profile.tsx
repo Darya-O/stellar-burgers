@@ -1,80 +1,88 @@
-import { ProfileMenu } from '@components';
+import type { FC } from 'react';
+
 import { Button, Input } from '@krgaa/react-developer-burger-ui-components';
+import styles from './profile.module.css';
+import commonStyles from '../common.module.css';
 
 import type { ProfileUIProps } from './type';
+import { ProfileMenu } from '@components';
 
-import styles from './profile.module.css';
-
-export const ProfileUI = ({
+export const ProfileUI: FC<ProfileUIProps> = ({
   formValue,
   isFormChanged,
   updateUserError,
   handleSubmit,
   handleCancel,
   handleInputChange,
-}: ProfileUIProps): React.JSX.Element => (
-  <main className={styles.container}>
+  inputError
+}) => (
+  <main className={`${commonStyles.container}`}>
     <div className={`mt-30 mr-15 ${styles.menu}`}>
       <ProfileMenu />
     </div>
-    <form className={`mt-30 ${styles.form}`} onSubmit={handleSubmit}>
+    <form
+      className={`mt-30 ${styles.form} ${commonStyles.form}`}
+      onSubmit={handleSubmit}
+    >
       <>
-        <div className="pb-6">
+        <div className='pb-6'>
           <Input
             type={'text'}
             placeholder={'Имя'}
             onChange={handleInputChange}
             value={formValue.name}
             name={'name'}
-            error={false}
-            errorText={''}
+            error={!!inputError?.name}
+            errorText={inputError?.name || ''}
             size={'default'}
             icon={'EditIcon'}
           />
         </div>
-        <div className="pb-6">
+        <div className='pb-6'>
           <Input
             type={'email'}
             placeholder={'E-mail'}
             onChange={handleInputChange}
             value={formValue.email}
             name={'email'}
-            error={false}
-            errorText={''}
+            error={!!inputError?.email}
+            errorText={inputError?.email || ''}
             size={'default'}
             icon={'EditIcon'}
           />
         </div>
-        <div className="pb-6">
+        <div className='pb-6'>
           <Input
             type={'password'}
             placeholder={'Пароль'}
             onChange={handleInputChange}
             value={formValue.password}
             name={'password'}
-            error={false}
-            errorText={''}
+            error={!!inputError?.password}
+            errorText={inputError?.password || ''}
             size={'default'}
             icon={'EditIcon'}
           />
         </div>
         {isFormChanged && (
-          <div>
+          <div className={`${styles.form} ${styles.error}`}>
             <Button
-              type="secondary"
-              htmlType="button"
-              size="medium"
+              type='secondary'
+              htmlType='button'
+              size='medium'
               onClick={handleCancel}
             >
               Отменить
             </Button>
-            <Button type="primary" size="medium" htmlType="submit">
+            <Button type='primary' size='medium' htmlType='submit'>
               Сохранить
             </Button>
           </div>
         )}
         {updateUserError && (
-          <p className={`${styles.error} pt-5 text text_type_main-default`}>
+          <p
+            className={`${commonStyles.error} pt-5 text text_type_main-default`}
+          >
             {updateUserError}
           </p>
         )}

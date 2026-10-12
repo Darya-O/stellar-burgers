@@ -1,29 +1,26 @@
-import { FC, useEffect, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { type FC, useEffect, useMemo } from 'react';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
-import { TIngredient } from '@utils-types';
-import { useSelector, useDispatch } from '../../services/store';
-import { fetchOrderByNumber } from '../../services/slices/feedSlice';
+import { type TIngredient } from '@utils-types';
+import { useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from '../../services/store';
+
+import {
+  fetchOrderByNumber,
+  selectViewedOrder
+} from '../../services/orderSlice';
+import { selectIngredients } from '../../services/ingredientsSlice';
 
 export const OrderInfo: FC = () => {
   const { number } = useParams<{ number: string }>();
   const dispatch = useDispatch();
 
-  const feedOrders = useSelector((state) => state.feed.orders);
-  const userOrders = useSelector((state) => state.orders.orders);
-  const ingredients = useSelector((state) => state.ingredients.ingredients);
-  const isLoading = useSelector((state) => state.feed.isLoading);
-
-  const orderData =
-    feedOrders.find((item) => item.number === Number(number)) ||
-    userOrders.find((item) => item.number === Number(number));
-
   useEffect(() => {
-    if (number && !orderData && !isLoading) {
-      dispatch(fetchOrderByNumber(Number(number)));
-    }
-  }, [number, orderData, isLoading, dispatch]);
+    dispatch(fetchOrderByNumber(Number(number)));
+  }, [number, dispatch]);
+
+  const orderData = useSelector(selectViewedOrder);
+  const ingredients = useSelector(selectIngredients);
 
   const orderInfo = useMemo(() => {
     if (!orderData || !ingredients.length) return null;
@@ -35,9 +32,9 @@ export const OrderInfo: FC = () => {
     };
 
     const ingredientsInfo = orderData.ingredients.reduce(
-      (acc: TIngredientsWithCount, item) => {
+      (acc: TIngredientsWithCount, item: string | number) => {
         if (!acc[item]) {
-          const ingredient = ingredients.find((ing) => ing._id === item);
+          const ingredient = ingredients.find((ing: { _id: string | number; }) => ing._id === item);
           if (ingredient) {
             acc[item] = {
               ...ingredient,
@@ -66,7 +63,7 @@ export const OrderInfo: FC = () => {
     };
   }, [orderData, ingredients]);
 
-  if (!orderInfo || isLoading) {
+  if (!orderInfo) {
     return <Preloader />;
   }
 

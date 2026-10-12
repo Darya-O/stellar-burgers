@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import {
   ConstructorPage,
   Feed,
@@ -7,72 +5,41 @@ import {
   Register,
   ForgotPassword,
   ResetPassword,
-  Profile,
+  ProfileUI,
   ProfileOrders,
   NotFound404
 } from '@pages';
-import {
-  AppHeader,
-  Modal,
-  OrderInfo,
-  IngredientDetails,
-  ProtectedRoute
-} from '@components';
-import { Preloader } from '@ui';
 
-import { useDispatch, useSelector } from '../../services/store';
-import { fetchIngredients } from '../../services/slices/ingredientsSlice';
-import { getUser } from '../../services/slices/authSlice';
+import { useLocation, useNavigate, Route, Routes } from 'react-router-dom';
+import { useEffect } from 'react';
 
-import '../../index.css';
 import styles from './app.module.css';
 
+import { AppHeader, IngredientDetails, Modal, OrderInfo } from '@components';
+import { getIngredients } from '../../services/ingredientsSlice';
+import { useDispatch } from '../../services/store';
+import { ProtectedRoute } from '../protected-router/protectedRoter';
+import { getUser } from '../../services/userSlice';
+
 const App = () => {
-  const dispatch = useDispatch();
+   const location = useLocation();
   const navigate = useNavigate();
-  const location = useLocation();
-
-  const background = location.state?.background;
-
-  const { ingredients, isLoading } = useSelector((state) => state.ingredients);
-  const { isAuthChecked, user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(getUser());
-
-    if (!ingredients || ingredients.length === 0) {
-      dispatch(fetchIngredients());
-    }
-  }, [dispatch, ingredients]);
-
-  if (!isAuthChecked || isLoading) {
-    return (
-      <div className={styles.app}>
-        <AppHeader />
-        <Preloader />
-      </div>
-    );
-  }
+    dispatch(getIngredients());
+  }, [dispatch]);
 
   return (
     <div className={styles.app}>
       <AppHeader />
-
-      <Routes location={background || location}>
+      <Routes location={location.state?.background || location}>
         <Route path='/' element={<ConstructorPage />} />
         <Route path='/feed' element={<Feed />} />
-
         <Route path='/feed/:number' element={<OrderInfo />} />
         <Route path='/ingredients/:id' element={<IngredientDetails />} />
-        <Route
-          path='/profile/orders/:number'
-          element={
-            <ProtectedRoute>
-              <OrderInfo />
-            </ProtectedRoute>
-          }
-        />
-
+        <Route path='*' element={<NotFound404 />} />
         <Route
           path='/login'
           element={
@@ -105,12 +72,21 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-
         <Route
           path='/profile'
           element={
             <ProtectedRoute>
-              <Profile />
+              <ProfileUI formValue={{
+                name: '',
+                email: '',
+                password: ''
+              }} isFormChanged={false} handleSubmit={function (): void {
+                throw new Error('Function not implemented.');
+              } } handleCancel={function (): void {
+                throw new Error('Function not implemented.');
+              } } handleInputChange={function (): void {
+                throw new Error('Function not implemented.');
+              } } />
             </ProtectedRoute>
           }
         />
@@ -122,11 +98,17 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-
-        <Route path='*' element={<NotFound404 />} />
+        <Route
+          path='/profile/orders/:number'
+          element={
+            <ProtectedRoute>
+              <OrderInfo />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
 
-      {background && (
+      {location.state?.background && (
         <Routes>
           <Route
             path='/feed/:number'

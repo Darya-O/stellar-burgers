@@ -6,6 +6,7 @@
  */
 declare const process: {
   env: {
+    NODE_ENV: string;
     BURGER_API_URL: string;
   };
 };

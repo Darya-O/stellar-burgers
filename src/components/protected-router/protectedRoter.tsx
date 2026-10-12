@@ -12,7 +12,7 @@ export const ProtectedRoute = ({
   children,
   onlyUnAuth = false
 }: ProtectedRouteProps): React.ReactNode => {
-  const { isAuthChecked, user } = useSelector((state) => state.auth);
+  const { isAuthChecked, user } = useSelector((state) => state.user);
   const location = useLocation();
 
   if (!isAuthChecked) {
