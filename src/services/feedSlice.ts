@@ -6,8 +6,8 @@ type TFeedState = {
   orders: TOrder[];
   total: number;
   totalToday: number;
-  isLoading?: boolean;
-  error?: string | undefined;
+  isLoading: boolean;
+  error: string | undefined;
 };
 
 const initialState: TFeedState = {

@@ -28,7 +28,9 @@ export const FeedInfo: FC = () => {
     <FeedInfoUI
       readyOrders={readyOrders}
       pendingOrders={pendingOrders}
-      feed={{ total, totalToday }}
+      feed={{ total, totalToday, orders,
+      isLoading,
+      error}}
     />
   );
 };

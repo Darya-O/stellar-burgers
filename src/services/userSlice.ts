@@ -86,6 +86,7 @@ export const logoutUser = createAsyncThunk('user/logoutUser', async () => {
   localStorage.removeItem('refreshToken');
 });
 
+
 export const userSlice = createSlice({
   name: 'user',
   initialState: initialState,
@@ -175,7 +176,6 @@ export const userSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(forgotPassword.fulfilled, (state) => {
-        localStorage.setItem('resetRequested', 'true');
         state.resetRequested = true;
         state.isLoading = false;
       })
@@ -189,7 +189,6 @@ export const userSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(resetPassword.fulfilled, (state) => {
-        localStorage.removeItem('resetRequested');
         state.resetRequested = false;
         state.isLoading = false;
       })
