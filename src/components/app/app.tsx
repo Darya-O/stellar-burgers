@@ -1,3 +1,4 @@
+import { AppHeader, IngredientDetails, Modal, OrderInfo } from '@components';
 import {
   ConstructorPage,
   Feed,
@@ -7,22 +8,20 @@ import {
   ResetPassword,
   ProfileUI,
   ProfileOrders,
-  NotFound404
+  NotFound404,
 } from '@pages';
-
-import { useLocation, useNavigate, Route, Routes } from 'react-router-dom';
 import { useEffect } from 'react';
+import { useLocation, useNavigate, Route, Routes } from 'react-router-dom';
+
+import { getIngredients } from '../../services/ingredientsSlice';
+import { useDispatch } from '../../services/store';
+import { getUser } from '../../services/userSlice';
+import { ProtectedRoute } from '../protected-router/protectedRoter';
 
 import styles from './app.module.css';
 
-import { AppHeader, IngredientDetails, Modal, OrderInfo } from '@components';
-import { getIngredients } from '../../services/ingredientsSlice';
-import { useDispatch } from '../../services/store';
-import { ProtectedRoute } from '../protected-router/protectedRoter';
-import { getUser } from '../../services/userSlice';
-
 const App = () => {
-   const location = useLocation();
+  const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -35,13 +34,13 @@ const App = () => {
     <div className={styles.app}>
       <AppHeader />
       <Routes location={location.state?.background || location}>
-        <Route path='/' element={<ConstructorPage />} />
-        <Route path='/feed' element={<Feed />} />
-        <Route path='/feed/:number' element={<OrderInfo />} />
-        <Route path='/ingredients/:id' element={<IngredientDetails />} />
-        <Route path='*' element={<NotFound404 />} />
+        <Route path="/" element={<ConstructorPage />} />
+        <Route path="/feed" element={<Feed />} />
+        <Route path="/feed/:number" element={<OrderInfo />} />
+        <Route path="/ingredients/:id" element={<IngredientDetails />} />
+        <Route path="*" element={<NotFound404 />} />
         <Route
-          path='/login'
+          path="/login"
           element={
             <ProtectedRoute onlyUnAuth>
               <Login />
@@ -49,7 +48,7 @@ const App = () => {
           }
         />
         <Route
-          path='/register'
+          path="/register"
           element={
             <ProtectedRoute onlyUnAuth>
               <Register />
@@ -57,7 +56,7 @@ const App = () => {
           }
         />
         <Route
-          path='/forgot-password'
+          path="/forgot-password"
           element={
             <ProtectedRoute onlyUnAuth>
               <ForgotPassword />
@@ -65,7 +64,7 @@ const App = () => {
           }
         />
         <Route
-          path='/reset-password'
+          path="/reset-password"
           element={
             <ProtectedRoute onlyUnAuth>
               <ResetPassword />
@@ -73,25 +72,31 @@ const App = () => {
           }
         />
         <Route
-          path='/profile'
+          path="/profile"
           element={
             <ProtectedRoute>
-              <ProfileUI formValue={{
-                name: '',
-                email: '',
-                password: ''
-              }} isFormChanged={false} handleSubmit={function (): void {
-                throw new Error('Function not implemented.');
-              } } handleCancel={function (): void {
-                throw new Error('Function not implemented.');
-              } } handleInputChange={function (): void {
-                throw new Error('Function not implemented.');
-              } } />
+              <ProfileUI
+                formValue={{
+                  name: '',
+                  email: '',
+                  password: '',
+                }}
+                isFormChanged={false}
+                handleSubmit={function (): void {
+                  throw new Error('Function not implemented.');
+                }}
+                handleCancel={function (): void {
+                  throw new Error('Function not implemented.');
+                }}
+                handleInputChange={function (): void {
+                  throw new Error('Function not implemented.');
+                }}
+              />
             </ProtectedRoute>
           }
         />
         <Route
-          path='/profile/orders'
+          path="/profile/orders"
           element={
             <ProtectedRoute>
               <ProfileOrders />
@@ -99,7 +104,7 @@ const App = () => {
           }
         />
         <Route
-          path='/profile/orders/:number'
+          path="/profile/orders/:number"
           element={
             <ProtectedRoute>
               <OrderInfo />
@@ -111,26 +116,26 @@ const App = () => {
       {location.state?.background && (
         <Routes>
           <Route
-            path='/feed/:number'
+            path="/feed/:number"
             element={
-              <Modal title='Детали заказа' onClose={() => navigate(-1)}>
+              <Modal title="Детали заказа" onClose={() => navigate(-1)}>
                 <OrderInfo />
               </Modal>
             }
           />
           <Route
-            path='/ingredients/:id'
+            path="/ingredients/:id"
             element={
-              <Modal title='Детали ингредиента' onClose={() => navigate(-1)}>
+              <Modal title="Детали ингредиента" onClose={() => navigate(-1)}>
                 <IngredientDetails />
               </Modal>
             }
           />
           <Route
-            path='/profile/orders/:number'
+            path="/profile/orders/:number"
             element={
               <ProtectedRoute>
-                <Modal title='Детали заказа' onClose={() => navigate(-1)}>
+                <Modal title="Детали заказа" onClose={() => navigate(-1)}>
                   <OrderInfo />
                 </Modal>
               </ProtectedRoute>

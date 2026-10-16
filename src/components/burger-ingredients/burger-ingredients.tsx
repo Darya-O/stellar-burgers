@@ -1,17 +1,18 @@
 import { useState, useRef, useEffect, type FC } from 'react';
 import { useInView } from 'react-intersection-observer';
 
-import type { TTabMode } from '@utils-types';
-import { BurgerIngredientsUI } from '../ui/burger-ingredients';
 import { selectIngredients } from '../../services/ingredientsSlice';
 import { useSelector } from '../../services/store';
+import { BurgerIngredientsUI } from '../ui/burger-ingredients';
+
+import type { TTabMode } from '@utils-types';
 
 export const BurgerIngredients: FC = () => {
   const selector = useSelector;
   const products = selector(selectIngredients);
-  const buns = products.filter((item: { type: string; }) => item.type === 'bun');
-  const mains = products.filter((item: { type: string; }) => item.type === 'main');
-  const sauces = products.filter((item: { type: string; }) => item.type === 'sauce');
+  const buns = products.filter((item: { type: string }) => item.type === 'bun');
+  const mains = products.filter((item: { type: string }) => item.type === 'main');
+  const sauces = products.filter((item: { type: string }) => item.type === 'sauce');
 
   const [currentTab, setCurrentTab] = useState<TTabMode>('bun');
   const titleBunRef = useRef<HTMLHeadingElement>(null);
@@ -19,15 +20,15 @@ export const BurgerIngredients: FC = () => {
   const titleSaucesRef = useRef<HTMLHeadingElement>(null);
 
   const [bunsRef, inViewBuns] = useInView({
-    threshold: 0
+    threshold: 0,
   });
 
   const [mainsRef, inViewFilling] = useInView({
-    threshold: 0
+    threshold: 0,
   });
 
   const [saucesRef, inViewSauces] = useInView({
-    threshold: 0
+    threshold: 0,
   });
 
   useEffect(() => {
@@ -40,14 +41,11 @@ export const BurgerIngredients: FC = () => {
     }
   }, [inViewBuns, inViewFilling, inViewSauces]);
 
-  const onTabClick = (tab: string) => {
+  const onTabClick = (tab: string): void => {
     setCurrentTab(tab as TTabMode);
-    if (tab === 'bun')
-      titleBunRef.current?.scrollIntoView({ behavior: 'smooth' });
-    if (tab === 'main')
-      titleMainRef.current?.scrollIntoView({ behavior: 'smooth' });
-    if (tab === 'sauce')
-      titleSaucesRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (tab === 'bun') titleBunRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (tab === 'main') titleMainRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (tab === 'sauce') titleSaucesRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (

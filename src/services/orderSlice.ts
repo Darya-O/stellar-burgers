@@ -1,10 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import {
-  orderBurgerApi,
-  getOrderByNumberApi,
-  getOrdersApi
-} from '../utils/burger-api';
-import type{ TOrder } from '../utils/types';
+
+import { orderBurgerApi, getOrderByNumberApi, getOrdersApi } from '../utils/burger-api';
+
+import type { TOrder } from '../utils/types';
 
 type TOrderState = {
   orderRequest: boolean;
@@ -21,12 +19,10 @@ const initialState: TOrderState = {
   viewedOrder: null,
   error: undefined,
   isLoading: false,
-  userOrders: []
+  userOrders: [],
 };
 
-export const getOrders = createAsyncThunk('feed/getOrders', async () =>
-  getOrdersApi()
-);
+export const getOrders = createAsyncThunk('feed/getOrders', async () => getOrdersApi());
 
 export const createOrder = createAsyncThunk(
   'order/create',
@@ -46,7 +42,7 @@ export const orderSlice = createSlice({
       state.orderModalData = null;
       state.orderRequest = false;
       state.error = undefined;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -91,8 +87,8 @@ export const orderSlice = createSlice({
     selectOrderRequest: (state) => state.orderRequest,
     selectOrderModalData: (state) => state.orderModalData,
     selectViewedOrder: (state) => state.viewedOrder,
-    selectOrderError: (state) => state.error
-  }
+    selectOrderError: (state) => state.error,
+  },
 });
 
 export const { resetOrderModalData } = orderSlice.actions;
@@ -101,5 +97,5 @@ export const {
   selectOrderModalData,
   selectOrderError,
   selectUserOrders,
-  selectViewedOrder
+  selectViewedOrder,
 } = orderSlice.selectors;

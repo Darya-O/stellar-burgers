@@ -1,13 +1,9 @@
+import { ResetPasswordUI } from '@ui-pages';
 import { type FC, type SyntheticEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from '../../services/store';
-import {
-  clearError,
-  resetPassword,
-  selectUserError
-} from '../../services/userSlice';
 
-import { ResetPasswordUI } from '@ui-pages';
+import { useDispatch, useSelector } from '../../services/store';
+import { clearError, resetPassword, selectUserError } from '../../services/userSlice';
 
 export const ResetPassword: FC = () => {
   const navigate = useNavigate();
@@ -18,19 +14,22 @@ export const ResetPassword: FC = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(clearError());
+    void dispatch(clearError());
   }, [dispatch]);
 
-  const handleSubmit = (e: SyntheticEvent) => {
+  const handleSubmit = async (e: SyntheticEvent): Promise<void> => {
     e.preventDefault();
-    dispatch(resetPassword({ password, token })).then((res: any) => {
-      if (resetPassword.fulfilled.match(res)) {
-        navigate('/login', { replace: true });
-      }
-    });
+    try {
+      await dispatch(resetPassword({ password, token }))
+      .unwrap()
+      .catch(() => {});
+      navigate('/login', { replace: true });
+    } catch (err) {
+      console.error('Ошибка сброса пароля:', err);
+    }
   };
 
-  useEffect(() => {
+  useEffect((): void => {
     if (!localStorage.getItem('resetRequested')) {
       navigate('/forgot-password', { replace: true });
     }

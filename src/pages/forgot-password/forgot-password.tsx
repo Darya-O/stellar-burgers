@@ -1,14 +1,9 @@
+import { ForgotPasswordUI } from '@ui-pages';
 import { type FC, useState, type SyntheticEvent, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useDispatch } from '../../services/store';
-import { useSelector } from '../../services/store';
-import { ForgotPasswordUI } from '@ui-pages';
-import {
-  clearError,
-  forgotPassword,
-  selectUserError
-} from '../../services/userSlice';
+import { useDispatch, useSelector } from '../../services/store';
+import { clearError, forgotPassword, selectUserError } from '../../services/userSlice';
 
 export const ForgotPassword: FC = () => {
   const [email, setEmail] = useState('');
@@ -21,7 +16,7 @@ export const ForgotPassword: FC = () => {
     dispatch(clearError());
   }, [dispatch]);
 
-  const handleSubmit = async (e: SyntheticEvent) => {
+  const handleSubmit = async (e: SyntheticEvent): Promise<void> => {
     e.preventDefault();
     const res = await dispatch(forgotPassword({ email }));
     if (forgotPassword.fulfilled.match(res)) {

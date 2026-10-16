@@ -1,6 +1,7 @@
-import React from 'react';
-import type { Preview } from '@storybook/react';
 import { BrowserRouter } from 'react-router-dom';
+
+import type { Preview } from '@storybook/react';
+import React from 'react';
 
 const preview: Preview = {
   parameters: {
@@ -8,9 +9,9 @@ const preview: Preview = {
     controls: {
       matchers: {
         color: /(background|color)$/i,
-        date: /Date$/i
-      }
-    }
+        date: /Date$/i,
+      },
+    },
   },
   decorators: [
     (Story) => (
@@ -19,8 +20,8 @@ const preview: Preview = {
           <Story />
         </div>
       </BrowserRouter>
-    )
-  ]
+    ),
+  ],
 };
 
 export default preview;

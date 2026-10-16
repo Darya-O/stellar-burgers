@@ -1,15 +1,15 @@
 import { configureStore, combineSlices } from '@reduxjs/toolkit';
-import { ingredientsSlice } from './ingredientsSlice';
-import { userSlice } from './userSlice';
-
 import {
   type TypedUseSelectorHook,
   useDispatch as dispatchHook,
-  useSelector as selectorHook
+  useSelector as selectorHook,
 } from 'react-redux';
+
 import { constructorSlice } from './constructorSlice';
-import { orderSlice } from './orderSlice';
 import { feedSlice } from './feedSlice';
+import { ingredientsSlice } from './ingredientsSlice';
+import { orderSlice } from './orderSlice';
+import { userSlice } from './userSlice';
 
 const rootReducer = combineSlices(
   ingredientsSlice,
@@ -21,7 +21,7 @@ const rootReducer = combineSlices(
 
 const store = configureStore({
   reducer: rootReducer,
-  devTools: process.env.NODE_ENV !== 'production'
+  devTools: process.env.NODE_ENV !== 'production',
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

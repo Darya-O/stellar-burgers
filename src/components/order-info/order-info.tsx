@@ -1,22 +1,20 @@
 import { type FC, useEffect, useMemo } from 'react';
-import { Preloader } from '../ui/preloader';
-import { OrderInfoUI } from '../ui/order-info';
-import { type TIngredient } from '@utils-types';
 import { useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from '../../services/store';
 
-import {
-  fetchOrderByNumber,
-  selectViewedOrder
-} from '../../services/orderSlice';
 import { selectIngredients } from '../../services/ingredientsSlice';
+import { fetchOrderByNumber, selectViewedOrder } from '../../services/orderSlice';
+import { useDispatch, useSelector } from '../../services/store';
+import { OrderInfoUI } from '../ui/order-info';
+import { Preloader } from '../ui/preloader';
+
+import type { TIngredient } from '@utils-types';
 
 export const OrderInfo: FC = () => {
   const { number } = useParams<{ number: string }>();
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(fetchOrderByNumber(Number(number)));
+  useEffect((): void => {
+    void dispatch(fetchOrderByNumber(Number(number)));
   }, [number, dispatch]);
 
   const orderData = useSelector(selectViewedOrder);
@@ -27,18 +25,18 @@ export const OrderInfo: FC = () => {
 
     const date = new Date(orderData.createdAt);
 
-    type TIngredientsWithCount = {
-      [key: string]: TIngredient & { count: number };
-    };
+    type TIngredientsWithCount = Record<string, TIngredient & { count: number }>;
 
     const ingredientsInfo = orderData.ingredients.reduce(
       (acc: TIngredientsWithCount, item: string | number) => {
         if (!acc[item]) {
-          const ingredient = ingredients.find((ing: { _id: string | number; }) => ing._id === item);
+          const ingredient = ingredients.find(
+            (ing: { _id: string | number }) => ing._id === item
+          );
           if (ingredient) {
             acc[item] = {
               ...ingredient,
-              count: 1
+              count: 1,
             };
           }
         } else {
@@ -59,7 +57,7 @@ export const OrderInfo: FC = () => {
       ...orderData,
       ingredientsInfo,
       date,
-      total
+      total,
     };
   }, [orderData, ingredients]);
 

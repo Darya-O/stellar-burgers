@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { type TUser } from '@utils-types';
+
 import {
   type TLoginData,
   type TRegisterData,
@@ -9,9 +9,11 @@ import {
   registerUserApi,
   updateUserApi,
   forgotPasswordApi,
-  resetPasswordApi
+  resetPasswordApi,
 } from '../utils/burger-api';
 import { setCookie, deleteCookie } from '../utils/cookie';
+
+import type { TUser } from '@utils-types';
 
 type TUserState = {
   user: TUser | null;
@@ -28,7 +30,7 @@ const initialState: TUserState = {
   isAuthenticated: false,
   isLoading: false,
   resetRequested: false,
-  error: null
+  error: null,
 };
 
 export const forgotPassword = createAsyncThunk(
@@ -86,20 +88,19 @@ export const logoutUser = createAsyncThunk('user/logoutUser', async () => {
   localStorage.removeItem('refreshToken');
 });
 
-
 export const userSlice = createSlice({
   name: 'user',
   initialState: initialState,
   reducers: {
     clearError: (state) => {
       state.error = null;
-    }
+    },
   },
   selectors: {
     selectUser: (state) => state.user,
     selectIsAuthChecked: (state) => state.isAuthChecked,
     selectIsAuthenticated: (state) => state.isAuthenticated,
-    selectUserError: (state) => state.error
+    selectUserError: (state) => state.error,
   },
   extraReducers: (builder) => {
     builder
@@ -196,14 +197,14 @@ export const userSlice = createSlice({
         state.error = action.error.message ?? 'Ошибка сброса пароля';
         state.isLoading = false;
       });
-  }
+  },
 });
 
 export const {
   selectUser,
   selectIsAuthChecked,
   selectIsAuthenticated,
-  selectUserError
+  selectUserError,
 } = userSlice.selectors;
 
 export const { clearError } = userSlice.actions;

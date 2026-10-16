@@ -1,5 +1,6 @@
-import { type FC, type SyntheticEvent, useState } from 'react';
 import { LoginUI } from '@ui-pages';
+import { type FC, type SyntheticEvent, useState } from 'react';
+
 import { useDispatch } from '../../services/store';
 import { loginUser } from '../../services/userSlice';
 
@@ -9,14 +10,14 @@ export const Login: FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e: SyntheticEvent) => {
+  const handleSubmit = (e: SyntheticEvent): void => {
     e.preventDefault();
-    dispatch(loginUser({ email, password }));
+    void dispatch(loginUser({ email, password }));
   };
 
   return (
     <LoginUI
-      errorText=''
+      errorText=""
       email={email}
       setEmail={setEmail}
       password={password}

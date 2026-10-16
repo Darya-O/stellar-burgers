@@ -1,4 +1,5 @@
 import { createSlice, nanoid, type PayloadAction } from '@reduxjs/toolkit';
+
 import type { TConstructorIngredient, TIngredient } from '@utils-types';
 
 type TConstructorState = {
@@ -8,7 +9,7 @@ type TConstructorState = {
 
 const initialState: TConstructorState = {
   bun: null,
-  ingredients: []
+  ingredients: [],
 };
 
 export const constructorSlice = createSlice({
@@ -20,8 +21,8 @@ export const constructorSlice = createSlice({
         state.bun = action.payload;
       },
       prepare: (ingredient: TIngredient) => ({
-        payload: { ...ingredient, id: nanoid() }
-      })
+        payload: { ...ingredient, id: nanoid() },
+      }),
     },
     removeBun: (state) => {
       state.bun = null;
@@ -31,8 +32,8 @@ export const constructorSlice = createSlice({
         state.ingredients.push({ ...action.payload });
       },
       prepare: (ingredient: TIngredient) => ({
-        payload: { ...ingredient, id: nanoid() }
-      })
+        payload: { ...ingredient, id: nanoid() },
+      }),
     },
     removeIngredient: (state, action: PayloadAction<string>) => {
       state.ingredients = state.ingredients.filter(
@@ -48,19 +49,19 @@ export const constructorSlice = createSlice({
       if (targetIndex < 0 || targetIndex >= state.ingredients.length) return;
       [state.ingredients[index], state.ingredients[targetIndex]] = [
         state.ingredients[targetIndex],
-        state.ingredients[index]
+        state.ingredients[index],
       ];
     },
     clearConstructor: (state) => {
       state.bun = null;
       state.ingredients = [];
-    }
+    },
   },
   selectors: {
     selectConstructorItems: (state) => state,
     selectConstructorBun: (state) => state.bun,
-    selectConstructorIngredients: (state) => state.ingredients
-  }
+    selectConstructorIngredients: (state) => state.ingredients,
+  },
 });
 
 export const {
@@ -69,11 +70,11 @@ export const {
   addIngredient,
   removeIngredient,
   moveIngredient,
-  clearConstructor
+  clearConstructor,
 } = constructorSlice.actions;
 
 export const {
   selectConstructorItems,
   selectConstructorBun,
-  selectConstructorIngredients
+  selectConstructorIngredients,
 } = constructorSlice.selectors;

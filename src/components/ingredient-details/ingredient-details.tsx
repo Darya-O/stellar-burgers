@@ -1,9 +1,10 @@
-import type { FC } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
+
+import { useSelector } from '../../services/store';
+import { IngredientDetailsUI } from '../ui/ingredient-details';
 import { Preloader } from '../ui/preloader';
 
-import { IngredientDetailsUI } from '../ui/ingredient-details';
-import { useSelector } from '../../services/store';
+import type { FC } from 'react';
 
 export const IngredientDetails: FC = () => {
   const location = useLocation();
@@ -13,7 +14,7 @@ export const IngredientDetails: FC = () => {
 
   const ingredientData =
     location.state?.ingredient ||
-    ingredients.find((item: { _id: string | undefined; }) => item._id === id) ||
+    ingredients.find((item: { _id: string | undefined }) => item._id === id) ||
     null;
 
   if (!ingredientData) {

@@ -1,8 +1,10 @@
 import { forwardRef, useMemo } from 'react';
+
+import { useSelector } from '../../services/store';
+import { IngredientsCategoryUI } from '../ui/ingredients-category';
+
 import type { TIngredientsCategoryProps } from './type';
 import type { TIngredient } from '@utils-types';
-import { IngredientsCategoryUI } from '../ui/ingredients-category';
-import { useSelector } from '../../services/store';
 
 export const IngredientsCategory = forwardRef<
   HTMLUListElement,
@@ -12,7 +14,7 @@ export const IngredientsCategory = forwardRef<
 
   const ingredientsCounters = useMemo(() => {
     const { bun, ingredients: constructorIngredients } = burgerConstructor;
-    const counters: { [key: string]: number } = {};
+    const counters: Record<string, number> = {};
     constructorIngredients.forEach((ingredient: TIngredient) => {
       if (!counters[ingredient._id]) counters[ingredient._id] = 0;
       counters[ingredient._id]++;
