@@ -16,12 +16,18 @@ export const ForgotPassword: FC = () => {
     dispatch(clearError());
   }, [dispatch]);
 
-  const handleSubmit = async (e: SyntheticEvent): Promise<void> => {
+  const handleSubmit = (e: SyntheticEvent): void => {
     e.preventDefault();
-    const res = await dispatch(forgotPassword({ email }));
-    if (forgotPassword.fulfilled.match(res)) {
-      navigate('/reset-password', { replace: true });
-    }
+
+    dispatch(forgotPassword({ email }))
+      .unwrap()
+      .then(() => {
+        localStorage.setItem('resetRequested', 'true');
+        navigate('/reset-password', { replace: true });
+      })
+      .catch((err) => {
+        console.error('Ошибка отправки запроса:', err);
+      });
   };
 
   return (

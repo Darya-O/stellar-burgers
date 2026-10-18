@@ -17,16 +17,18 @@ export const ResetPassword: FC = () => {
     void dispatch(clearError());
   }, [dispatch]);
 
-  const handleSubmit = async (e: SyntheticEvent): Promise<void> => {
+  const handleSubmit = (e: SyntheticEvent): void => {
     e.preventDefault();
-    try {
-      await dispatch(resetPassword({ password, token }))
+
+    dispatch(resetPassword({ password, token }))
       .unwrap()
-      .catch(() => {});
-      navigate('/login', { replace: true });
-    } catch (err) {
-      console.error('Ошибка сброса пароля:', err);
-    }
+      .then(() => {
+        localStorage.removeItem('resetRequested');
+        navigate('/login', { replace: true });
+      })
+      .catch((err) => {
+        console.error('Ошибка сброса пароля:', err);
+      });
   };
 
   useEffect((): void => {

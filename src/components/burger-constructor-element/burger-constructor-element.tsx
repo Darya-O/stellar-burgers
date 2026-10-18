@@ -7,20 +7,20 @@ import { useDispatch } from '../../services/store';
 import type { BurgerConstructorElementProps } from './type';
 
 export const BurgerConstructorElement: FC<BurgerConstructorElementProps> = memo(
-    function BurgerConstructorElement({ ingredient, index, totalItems }) {
-        const dispatch = useDispatch();
+  function BurgerConstructorElement({ ingredient, index, totalItems }) {
+    const dispatch = useDispatch();
 
-        const handleMoveDown = (): void => {
-            dispatch(moveIngredient({ index, direction: 'down' }));
-        };
+    const handleMoveDown = (): void => {
+      dispatch(moveIngredient({ index, direction: 'down' }));
+    };
 
-        const handleMoveUp = (): void => {
-            dispatch(moveIngredient({ index, direction: 'up' }));
-        };
+    const handleMoveUp = (): void => {
+      dispatch(moveIngredient({ index, direction: 'up' }));
+    };
 
-        const handleClose = (): void => {
-            dispatch(removeIngredient(ingredient.id));
-        };
+    const handleClose = (): void => {
+      dispatch(removeIngredient(ingredient.id));
+    };
 
     return (
       <BurgerConstructorElementUI

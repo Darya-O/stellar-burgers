@@ -10,7 +10,7 @@ const checkResponse = async <T>(res: Response): Promise<T> => {
     return data;
   }
 
-  const err = await res.json();
+  const err: { message?: string } = await res.json();
   throw new Error(err?.message ?? `Ошибка ${res.status}`);
 };
 

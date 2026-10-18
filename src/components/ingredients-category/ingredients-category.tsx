@@ -9,12 +9,13 @@ import type { TIngredient } from '@utils-types';
 export const IngredientsCategory = forwardRef<
   HTMLUListElement,
   TIngredientsCategoryProps
->(({ title, titleRef, ingredients }, ref) => {
+>(function IngredientsCategory({ title, titleRef, ingredients }, ref) {
   const burgerConstructor = useSelector((state) => state.burgerConstructor);
 
   const ingredientsCounters = useMemo(() => {
     const { bun, ingredients: constructorIngredients } = burgerConstructor;
     const counters: Record<string, number> = {};
+
     constructorIngredients.forEach((ingredient: TIngredient) => {
       if (!counters[ingredient._id]) counters[ingredient._id] = 0;
       counters[ingredient._id]++;
@@ -35,3 +36,5 @@ export const IngredientsCategory = forwardRef<
     />
   );
 });
+
+IngredientsCategory.displayName = 'IngredientsCategory';

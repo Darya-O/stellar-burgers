@@ -8,9 +8,9 @@ import { useDispatch } from '../../services/store';
 import type { TBurgerIngredientProps } from './type';
 
 export const BurgerIngredient: FC<TBurgerIngredientProps> = memo(
-    function BurgerIngredient({ ingredient, count }) {
-        const dispatch = useDispatch();
-        const location = useLocation();
+  function BurgerIngredient({ ingredient, count }) {
+    const dispatch = useDispatch();
+    const location = useLocation();
 
     const handleAdd = (): void => {
       if (ingredient.type === 'bun') {

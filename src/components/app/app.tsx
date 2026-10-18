@@ -6,13 +6,13 @@ import {
   Register,
   ForgotPassword,
   ResetPassword,
-  ProfileUI,
   ProfileOrders,
   NotFound404,
 } from '@pages';
 import { useEffect } from 'react';
 import { useLocation, useNavigate, Route, Routes } from 'react-router-dom';
 
+import { Profile } from '../../pages/profile/ProfileContainer';
 import { getIngredients } from '../../services/ingredientsSlice';
 import { useDispatch } from '../../services/store';
 import { getUser } from '../../services/userSlice';
@@ -75,23 +75,7 @@ const App = () => {
           path="/profile"
           element={
             <ProtectedRoute>
-              <ProfileUI
-                formValue={{
-                  name: '',
-                  email: '',
-                  password: '',
-                }}
-                isFormChanged={false}
-                handleSubmit={function (): void {
-                  throw new Error('Function not implemented.');
-                }}
-                handleCancel={function (): void {
-                  throw new Error('Function not implemented.');
-                }}
-                handleInputChange={function (): void {
-                  throw new Error('Function not implemented.');
-                }}
-              />
+              <Profile />
             </ProtectedRoute>
           }
         />

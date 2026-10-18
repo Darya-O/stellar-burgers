@@ -1,7 +1,15 @@
 import { BrowserRouter } from 'react-router-dom';
 
-import type { Preview } from '@storybook/react';
-import React from 'react';
+import type { Preview, Decorator } from '@storybook/react';
+import type React from 'react';
+
+const withRouter: Decorator = (Story): React.JSX.Element => (
+  <BrowserRouter>
+    <div style={{ padding: 20, width: 'fit-content' }}>
+      <Story />
+    </div>
+  </BrowserRouter>
+);
 
 const preview: Preview = {
   parameters: {
@@ -13,15 +21,7 @@ const preview: Preview = {
       },
     },
   },
-  decorators: [
-    (Story) => (
-      <BrowserRouter>
-        <div style={{ padding: 20, width: 'fit-content' }}>
-          <Story />
-        </div>
-      </BrowserRouter>
-    ),
-  ],
+  decorators: [withRouter],
 };
 
 export default preview;

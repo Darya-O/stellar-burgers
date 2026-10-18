@@ -1,6 +1,7 @@
 import { type FC, memo, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 
+import { selectIngredients } from '../../services/ingredientsSlice';
 import { useSelector } from '../../services/store';
 import { OrderCardUI } from '../ui/order-card';
 
@@ -9,23 +10,19 @@ import type { TIngredient } from '@utils-types';
 
 const maxIngredients = 6;
 
-export const OrderCard: FC<OrderCardProps> = memo(({ order }) => {
+export const OrderCard: FC<OrderCardProps> = memo(function OrderCard({ order }) {
   const location = useLocation();
-  const ingredients = useSelector((state) => state.ingredients.ingredients);
-
+  const ingredients = useSelector(selectIngredients);
   const orderInfo = useMemo(() => {
     if (!ingredients.length) return null;
 
-    const ingredientsInfo = order.ingredients.reduce<TIngredient[]>(
-      (acc, item) => {
-        const ingredient = ingredients.find((ing: TIngredient) => ing._id === item);
-        if (ingredient) return [...acc, ingredient];
-        return acc;
-      },
-      [order, ingredients]
-    );
+    const ingredientsInfo = order.ingredients.reduce<TIngredient[]>((acc, item) => {
+      const ingredient = ingredients.find((ing) => ing._id === item);
+      if (ingredient) return [...acc, ingredient];
+      return acc;
+    }, []);
 
-    const total = ingredientsInfo.reduce((acc, item) => acc + item.price, 0);
+    const total = ingredientsInfo.reduce<number>((acc, item) => acc + item.price, 0);
 
     const ingredientsToShow = ingredientsInfo.slice(0, maxIngredients);
 
