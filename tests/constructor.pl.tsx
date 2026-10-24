@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import ingredientsData from './hars/ingredients.json';
+import ingredientsData from './hars/ingredients.json' with { type: 'json' };
 import type { TIngredient } from '../src/utils/types';
 
 const ingredients = ingredientsData.data as TIngredient[];
@@ -41,7 +41,7 @@ test.beforeEach(async ({ page }) => {
 
 test.describe('Добавление ингредиентов в конструктор', () => {
   test('булка добавляется в верхнюю и нижнюю позиции', async ({ page }) => {
-    await expect(page.getByText('Выберите булки')).toHaveCount(2);
+    await expect(page.getByText('Выберите булку')).toHaveCount(2);
 
     await addIngredient(page, BUN._id);
 
@@ -51,7 +51,7 @@ test.describe('Добавление ингредиентов в конструк
     await expect(page.getByTestId('constructor-bun-bottom')).toContainText(
       `${BUN.name} (низ)`
     );
-    await expect(page.getByText('Выберите булки')).toHaveCount(0);
+    await expect(page.getByText('Выберите булку')).toHaveCount(0);
   });
 
   test('начинка и соус добавляются в список', async ({ page }) => {
