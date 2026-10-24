@@ -42,7 +42,7 @@ export const ingredientsSlice = createSlice({
       })
       .addCase(getIngredients.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message ?? 'Не удалось загрузить ингредиенты';
+        state.error = action.error.message || 'Не удалось загрузить ингредиенты';
       });
   },
 });
