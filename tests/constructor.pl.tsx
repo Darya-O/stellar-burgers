@@ -138,6 +138,7 @@ test.describe('Оформление заказа', () => {
       localStorage.setItem('refreshToken', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhYTdlNTA4NmExNzJkMDAxYjk5NGYwMSIsImlhdCI6MTc4OTU2ODI1NSwiZXhwIjoxNzg5NTY5NDU1fQ.7kXd9cIwEK8hq7EzDySXZ0jvVNTWNOXIK1P3oaaG2AQ')
     );
 
+    
     await page.routeFromHAR('tests/hars/user.har', {
       url: '**/api/auth/user',
       update: false
