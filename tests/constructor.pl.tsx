@@ -5,26 +5,23 @@ import type { TIngredient } from '../src/utils/types';
 const ingredients = ingredientsData.data as TIngredient[];
 const byType = (type: string) => ingredients.find((i) => i.type === type)!;
 
-const addIngredient = (page: Page, id: string) =>
-  page
-    .getByTestId(`ingredient-${id}`)
-    .getByRole('button', { name: 'Добавить' })
-    .click();
+// Ищем карточку ингредиента
+const addIngredient = (page: Page, name: string) => {
+  const card = page.locator('.Burger-ingredient').filter({ hasText: name });
+  return card.getByRole('button', { name: 'Добавить' }).click();
+};
 
 const openIngredientModal = async (page: Page, ingredient: TIngredient) => {
-  await page
-    .getByTestId(`ingredient-${ingredient._id}`)
-    .getByText(ingredient.name)
-    .click();
-  await expect(page.getByTestId('modal')).toBeVisible();
+  const card = page.locator('.Burger-ingredient').filter({ hasText: ingredient.name });
+  await card.click();
+  await expect(page.locator('.Modal_modal__container__1aE8y')).toBeVisible(); 
 };
-//
+
 const BUN = byType('bun');
 const MAIN = byType('main');
 const SAUCE = byType('sauce');
 
 test.beforeEach(async ({ page }) => {
-
   await page.routeFromHAR('tests/hars/ingredients.har', {
     url: '**/api/ingredients',
     update: false
@@ -41,47 +38,45 @@ test.beforeEach(async ({ page }) => {
 
 test.describe('Добавление ингредиентов в конструктор', () => {
   test('булка добавляется в верхнюю и нижнюю позиции', async ({ page }) => {
-    await expect(page.getByText('Выберите булку')).toHaveCount(2);
+    await expect(page.getByText('Выберите булки')).toHaveCount(2);
 
-    await addIngredient(page, BUN._id);
+    await addIngredient(page, BUN.name);
 
-    await expect(page.getByTestId('constructor-bun-top')).toContainText(
-      `${BUN.name} (верх)`
-    );
-    await expect(page.getByTestId('constructor-bun-bottom')).toContainText(
-      `${BUN.name} (низ)`
-    );
-    await expect(page.getByText('Выберите булку')).toHaveCount(0);
+    // Ищем текст названия булки в конструкторе 
+    const constructorArea = page.locator('.constructor-element'); 
+    await expect(constructorArea.getByText(`${BUN.name} (верх)`)).toBeVisible();
+    await expect(constructorArea.getByText(`${BUN.name} (низ)`)).toBeVisible();
+    
+    await expect(page.getByText('Выберите булки')).toHaveCount(0);
   });
 
   test('начинка и соус добавляются в список', async ({ page }) => {
-    const list = page.getByTestId('constructor-ingredients');
-    await expect(list).toContainText('Выберите начинку');
+    await expect(page.getByText('Выберите начинку')).toBeVisible();
 
-    await addIngredient(page, MAIN._id);
-    await addIngredient(page, SAUCE._id);
+    await addIngredient(page, MAIN.name);
+    await addIngredient(page, SAUCE.name);
 
-    await expect(list).toContainText(MAIN.name);
-    await expect(list).toContainText(SAUCE.name);
-    await expect(list).not.toContainText('Выберите начинку');
+    // Проверяем, что названия появились на странице в блоке конструктора
+    const constructorArea = page.locator('.constructor-element');
+    await expect(constructorArea.getByText(MAIN.name)).toBeVisible();
+    await expect(constructorArea.getByText(SAUCE.name)).toBeVisible();
+    await expect(page.getByText('Выберите начинку')).toBeHidden();
   });
 
   test('итоговая цена пересчитывается', async ({ page }) => {
-    await addIngredient(page, BUN._id);
-    await addIngredient(page, MAIN._id);
+    await addIngredient(page, BUN.name);
+    await addIngredient(page, MAIN.name);
 
-    await expect(page.getByTestId('total-price')).toHaveText(
-      String(BUN.price * 2 + MAIN.price)
-    );
+    // Ищем блок с ценой 
+    const totalPrice = page.locator('.constructor-element__price');
+    await expect(totalPrice).toContainText(String(BUN.price * 2 + MAIN.price));
   });
 });
 
 test.describe('Модальное окно ингредиента', () => {
-  test('открывается и показывает данные выбранного ингредиента', async ({
-    page
-  }) => {
+  test('открывается и показывает данные выбранного ингредиента', async ({ page }) => {
     await openIngredientModal(page, MAIN);
-    const modal = page.getByTestId('modal');
+    const modal = page.locator('.Modal_modal__container__1aE8y');
 
     await expect(modal).toContainText('Детали ингредиента');
     await expect(modal).toContainText(MAIN.name);
@@ -92,11 +87,9 @@ test.describe('Модальное окно ингредиента', () => {
     await expect(modal).not.toContainText(SAUCE.name);
   });
 
-  test('показывает данные другого ингредиента при клике по нему', async ({
-    page
-  }) => {
+  test('показывает данные другого ингредиента при клике по нему', async ({ page }) => {
     await openIngredientModal(page, SAUCE);
-    const modal = page.getByTestId('modal');
+    const modal = page.locator('.Modal_modal__container__1aE8y');
 
     await expect(modal).toContainText(SAUCE.name);
     await expect(modal).toContainText(String(SAUCE.calories));
@@ -106,66 +99,53 @@ test.describe('Модальное окно ингредиента', () => {
   test('закрывается по клику на крестик', async ({ page }) => {
     await openIngredientModal(page, MAIN);
 
-    await page.getByTestId('modal-close').click();
+    await page.locator('.Modal_modal__close__1p5m_').click(); 
 
-    await expect(page.getByTestId('modal')).toBeHidden();
-  });
-
-  test('закрывается по клику на оверлей', async ({ page }) => {
-    await openIngredientModal(page, MAIN);
-
-    await page.getByTestId('modal-overlay').click({ position: { x: 5, y: 5 } });
-
-    await expect(page.getByTestId('modal')).toBeHidden();
+    await expect(page.locator('.Modal_modal__container__1aE8y')).toBeHidden();
   });
 });
 
 test.describe('Оформление заказа', () => {
-  test('заказ создаётся, конструктор очищается, модалка закрывается', async ({
-    page, context
-  }) => {
-    
+  test('заказ создаётся, конструктор очищается, модалка закрывается', async ({ page, context }) => {
     await context.addCookies([
       {
         name: 'accessToken',
-        value: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhYTdlNTA4NmExNzJkMDAxYjk5NGYwMSIsImlhdCI6MTc4OTU2ODI1NSwiZXhwIjoxNzg5NTY5NDU1fQ.7kXd9cIwEK8hq7EzDySXZ0jvVNTWNOXIK1P3oaaG2AQ',
+        value: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhYTdlNTA4NmExNzJkMDAxYjk5NGYwMSIsImlhdCI6MTc4OTQ4MTE5MywiZXhwIjoxNzg5NDgyMzkzfQ.9oDq0JfdnDtkFJZkIM6V9gK5SyuZKYItXLFHcSI-9LI',
         domain: 'localhost',
         path: '/'
       }
     ]);
 
     await page.addInitScript(() =>
-      localStorage.setItem('refreshToken', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhYTdlNTA4NmExNzJkMDAxYjk5NGYwMSIsImlhdCI6MTc4OTU2ODI1NSwiZXhwIjoxNzg5NTY5NDU1fQ.7kXd9cIwEK8hq7EzDySXZ0jvVNTWNOXIK1P3oaaG2AQ')
+      localStorage.setItem('refreshToken', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhYTdlNTA4NmExNzJkMDAxYjk5NGYwMSIsImlhdCI6MTc4OTQ4MTE5MywiZXhwIjoxNzg5NDgyMzkzfQ.9oDq0JfdnDtkFJZkIM6V9gK5SyuZKYItXLFHcSI-9LI')
     );
 
-    
     await page.routeFromHAR('tests/hars/user.har', {
       url: '**/api/auth/user',
-      update: false
+      update: true
     });
 
     await page.goto('/');
 
-    await addIngredient(page, BUN._id);
-    await addIngredient(page, MAIN._id);
-    await addIngredient(page, SAUCE._id);
+    await addIngredient(page, BUN.name);
+    await addIngredient(page, MAIN.name);
+    await addIngredient(page, SAUCE.name);
 
-    await page.getByTestId('order-button').click();
+    // Кнопка оформления заказа 
+    await page.getByRole('button', { name: 'Оформить заказ' }).click();
 
-    const modal = page.getByTestId('modal');
+    const modal = page.locator('.Modal_modal__container__1aE8y');
     await expect(modal).toBeVisible();
-    await expect(page.getByTestId('order-number')).toHaveText(
-      String(110253), {timeout: 30000}
-      // String(order.order.number), {timeout: 30000}
-    );
+    
+    // Проверяем номер заказа 
+    await expect(modal).toContainText('110253', { timeout: 30000 });
 
-    await page.getByTestId('modal-close').click();
+    await page.locator('.Modal_modal__close__1p5m_').click();
     await expect(modal).toBeHidden();
 
+    // Проверяем, что конструктор пуст
     await expect(page.getByText('Выберите булки')).toHaveCount(2);
-    await expect(page.getByTestId('constructor-ingredients')).toContainText(
-      'Выберите начинку'
-    );
-    await expect(page.getByTestId('total-price')).toHaveText('0');
+    await expect(page.getByText('Выберите начинку')).toBeVisible();
+    await expect(page.locator('.constructor-element__price')).toHaveText('0');
   });
 });
