@@ -27,17 +27,23 @@ const MAIN = byType('main');
 const SAUCE = byType('sauce');
 
 test.beforeEach(async ({ page }) => {
+  await page.routeFromHAR('tests/hars/user.har', {
+    url: '**/api/auth/user',
+    update: false,
+  });
+
   await page.routeFromHAR('tests/hars/ingredients.har', {
     url: '**/api/ingredients',
-    update: false
+    update: false,
   });
 
   await page.routeFromHAR('tests/hars/order.har', {
     url: '**/api/orders',
-    update: false
+    update: false,
   });
 
   await page.goto('/');
+  
   await expect(page.getByText('Соберите бургер')).toBeVisible();
 });
 
@@ -132,13 +138,6 @@ test.describe('Оформление заказа', () => {
     await page.addInitScript(() =>
       localStorage.setItem('refreshToken', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhYTdlNTA4NmExNzJkMDAxYjk5NGYwMSIsImlhdCI6MTc4OTQ4MTE5MywiZXhwIjoxNzg5NDgyMzkzfQ.9oDq0JfdnDtkFJZkIM6V9gK5SyuZKYItXLFHcSI-9LI')
     );
-
-    await page.routeFromHAR('tests/hars/user.har', {
-      url: '**/api/auth/user',
-      update: true
-    });
-
-    await page.goto('/');
 
     await addIngredient(page, BUN.name);
     await addIngredient(page, MAIN.name);
